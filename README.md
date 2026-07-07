@@ -20,5 +20,5 @@
 ### Nozzle -> Eddy DUO 물리적 위치
 - X: -34mm
 - Y: +16mm
-- Z: +3mm
+- Z: +2mm
 
