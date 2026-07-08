@@ -1,4 +1,4 @@
-# [WIP] Ender V3 SE Klipper Config
+# Ender V3 SE Klipper Config
 > with Eddy DUO + a(soon)
 
 ### 3D Models & Modding
@@ -13,6 +13,8 @@
 - MGN 9H X/Y axis upgrade (Aliexpress)
 - Ceramic Hotend
 - Eddy DUO(USB)
+- GDSTIME 5020 fan (nozzle cooling)
+- WINSIN 4020 fan (hotend cooling)
 
 > Eddy Mount 상단부를 적절히 잘라야 함
 > 4020 hotend fan mount 는 간섭이 있어 102% 출력 권장
