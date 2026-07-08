@@ -7,6 +7,8 @@
 - [Eddy Mount](https://www.printables.com/model/1402895-ender-3-v3-se-btt-eddy-mount)
 - [5020 fan duct](https://www.printables.com/model/778630-ender-3-v3-se-5020-fan-duct)
 - [4020 hotend fan mount](https://www.printables.com/model/1270498-ender-3-v3-se-wceramic-hotend-upgrade-4010-4020-fa) 
+- [BentoBox/WIP](https://www.printables.com/model/272525-bentobox-v20-carbon-filter-for-bambu-lab-x1c-enclo)
+- (Soon) Ender V3 SE XYZ Stepper Motor Fan Mount
 
 #### Modding
 - RDBB MGN 9H 300mm x3
