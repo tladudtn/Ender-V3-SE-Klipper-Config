@@ -12,16 +12,13 @@
 #
 # Filtering: readings with a CRC error or exactly 85.000C (the DS18B20
 # power-on reset value, returned when a conversion did not complete) are
-# discarded. The reported temperature is the median of the last
-# 'ds18_samples' valid readings. Read errors never shut down the printer.
-import collections
+# discarded and the last valid value is kept. Read errors never shut down
+# the printer.
 import logging
 import threading
 import time
 
 DS18_REPORT_TIME = 3.0
-DS18_SAMPLES = 5
-DS18_RETRY_TIME = 0.5
 POWERON_RAW = 85000
 
 class DS18B20:
@@ -31,11 +28,9 @@ class DS18B20:
         self.reactor = self.printer.get_reactor()
         self.report_time = config.getfloat(
             'ds18_report_time', DS18_REPORT_TIME, minval=1.0)
-        samples = config.getint('ds18_samples', DS18_SAMPLES, minval=1)
         self.serial_no = config.get('serial_no')
         self.path = "/sys/bus/w1/devices/%s/w1_slave" % (self.serial_no,)
         self.temp = self.min_temp = self.max_temp = 0.0
-        self._samples = collections.deque(maxlen=samples)
         self._valid = True
         self._callback = None
         self._lock = threading.Lock()
@@ -66,21 +61,17 @@ class DS18B20:
                          " holding last value", self.name, reason)
     def _reader(self):
         while not self._stop:
-            delay = self.report_time
             try:
                 raw, reason = self._read_raw()
             except Exception as e:
                 raw, reason = None, "read error: %s" % (e,)
             if raw is None:
                 self._set_valid(False, reason)
-                delay = DS18_RETRY_TIME
             else:
                 self._set_valid(True)
                 with self._lock:
-                    self._samples.append(raw / 1000.0)
-                    ordered = sorted(self._samples)
-                    self.temp = ordered[len(ordered) // 2]
-            time.sleep(delay)
+                    self.temp = raw / 1000.0
+            time.sleep(self.report_time)
     def handle_connect(self):
         self.reactor.update_timer(self._sample_timer, self.reactor.NOW)
     def setup_minmax(self, min_temp, max_temp):

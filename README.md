@@ -30,7 +30,6 @@
 Pi GPIO22에 1-wire로 연결, 커스텀 Klipper 모듈 `ds18b20/ds18b20_sysfs.py` (`sensor_type: DS18B20_HOST`) 로 sysfs 에서 읽음
 
 - CRC 오류, 85.000°C(전원 리셋 기본값 = 변환 실패) 읽기는 버림
-- 유효한 최근 `ds18_samples`(기본 5)개의 **중앙값**을 보고
 - 읽기 오류가 나도 프린터를 멈추지 않고 마지막 값 유지 (Klipper 내장 `DS18B20` + host MCU 방식은 읽기 오류 시 shutdown 되어 사용 안 함)
 
 **설치**
