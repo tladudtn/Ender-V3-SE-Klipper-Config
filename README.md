@@ -21,9 +21,9 @@
 > Eddy Mount 상단부를 적절히 잘라야 함
 > 4020 hotend fan mount 는 간섭이 있어 102% 출력 권장
 
-### Nozzle -> Eddy DUO 물리적 위치
-- X: -34mm
-- Y: +16mm
+### Nozzle -> Eddy DUO 코일 중심 위치 (printer.cfg 기준)
+- X: -36.5mm (`x_offset`)
+- Y: -16mm (`y_offset`)
 - Z: +2mm
 
 ### Eddy DUO 설정 기준 (USB 모드)
