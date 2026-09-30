@@ -26,27 +26,27 @@
 - Y: +16mm
 - Z: +2mm
 
-### DS18B20 온도 센서 (Pi host MCU)
-Pi GPIO22에 1-wire로 연결, Klipper 내장 `DS18B20` 센서를 Linux host MCU(`[mcu host]`)로 읽음
+### DS18B20 챔버 온도 센서 (선택)
+Pi GPIO22에 1-wire로 연결, 커스텀 Klipper 모듈 `ds18b20/ds18b20_sysfs.py` (`sensor_type: DS18B20_HOST`) 로 sysfs 에서 읽음
 
+- CRC 오류, 85.000°C(전원 리셋 기본값 = 변환 실패) 읽기는 버림
+- 유효한 최근 `ds18_samples`(기본 5)개의 **중앙값**을 보고
+- 읽기 오류가 나도 프린터를 멈추지 않고 마지막 값 유지 (Klipper 내장 `DS18B20` + host MCU 방식은 읽기 오류 시 shutdown 되어 사용 안 함)
+
+**설치**
 1. 1-wire 활성화 (`/boot/firmware/config.txt`) 후 재부팅
    ```
    dtoverlay=w1-gpio,gpiopin=22,pullup=1
    ```
-   `ls /sys/bus/w1/devices/` 로 `28-xxxxxxxxxxxx` 시리얼 확인 → `printer.cfg` 의 `serial_no` 에 입력
-2. Host MCU 빌드/설치 (메인보드용 `.config`, `out/` 과 분리)
+2. `ls /sys/bus/w1/devices/` 로 `28-xxxxxxxxxxxx` 시리얼 확인 → `ds18b20/ds18b20.cfg` 의 `serial_no` 에 입력
+3. 모듈 링크 후 Klipper 재시작
    ```bash
-   cd ~/klipper
-   sudo cp ./scripts/klipper-mcu.service /etc/systemd/system/
-   sudo systemctl enable klipper-mcu.service
-   make KCONFIG_CONFIG=.config.host OUT=out_host/ menuconfig   # Micro-controller Architecture: Linux process
-   sudo systemctl stop klipper
-   make KCONFIG_CONFIG=.config.host OUT=out_host/ flash
-   sudo systemctl start klipper-mcu klipper
+   ./ds18b20/install.sh   # ~/klipper/klippy/extras/ds18b20_sysfs.py 심볼릭 링크 생성
    ```
-3. `printer.cfg` 의 `[mcu host]`, `[temperature_sensor ds18b20]` 사용
 
-> 이전에 쓰던 커스텀 모듈 `klippy/extras/ds18b20_sysfs.py` (`DS18B20_HOST`) 는 더 이상 필요 없음
+**비활성화**: `ds18b20/` 폴더 삭제 → `printer.cfg` 는 `[include ds18b20/*.cfg]` 와일드카드라 파일이 없어도 에러 없음
+
+**문제 해결**: 85°C가 자주 나오면 변환 중 센서가 리셋되는 것 → VDD 연결부 접촉/전원 확인 (VDD-GND 사이 100nF 커패시터 권장)
 
 ### ADXL345
 현재 센서 분리 상태 → 연결 안 된 채로 include 하면 Klipper가 시작되지 않으므로 `printer.cfg` 에서 `#[include adxl.cfg]` 주석 처리
