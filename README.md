@@ -26,6 +26,32 @@
 - Y: +16mm
 - Z: +2mm
 
+### Eddy DUO 설정 기준 (USB 모드)
+이 설정은 **BTT Eddy DUO를 USB로 연결**한 기준 → Eddy DUO 자체 RP2040 MCU + 코일 서미스터 사용 (BTT Eddy USB와 같은 구성)
+
+| 항목 | Eddy DUO (USB, 현재) | Eddy Coil (툴보드 I2C) |
+|---|---|---|
+| `[mcu eddy]` | 필요 (`/dev/serial/by-id/usb-Klipper_rp2040_...`) | 삭제 |
+| `[temperature_sensor btt_eddy_mcu]` | 사용 | 삭제 |
+| `[probe_eddy_current btt_eddy]` `i2c_mcu` / `i2c_bus` | `eddy` / `i2c0f` | 툴보드 MCU 이름 / 툴보드 I2C 버스 |
+| `[temperature_probe btt_eddy]` | 사용 (`eddy:gpio26`) | 삭제 (온도 보정 없음) |
+| `EDDY_CALIBRATE_TEMP` (4단계) | 사용 | 사용 불가 |
+
+**Z 홈**: Z 스위치 없이 Eddy DUO를 Z endstop으로 사용
+- `[stepper_z] endstop_pin: probe:z_virtual_endstop`
+- `[gcode_macro G28]` → X/Y 홈 후 `FORCE_MOVE`로 Z 10mm 올린 뒤 Z 홈 (`[force_move]` 필요)
+- `[safe_z_home]` 로 베드 중앙에서 Z 홈
+
+**캘리브레이션 순서** (`EDDY_CALIBRATE` 실행 시 콘솔에 절차 출력, Fluidd 매크로도 이 순서로 정렬)
+
+| 단계 | 매크로 | 이후 |
+|---|---|---|
+| 1-1 | `EDDY_PREP_20` (노즐 20mm 위치) | |
+| 1-2 | `EDDY_CALIBRATE_COIL` | `SAVE_CONFIG` + 재시작 |
+| 2 | `EDDY_CALIBRATE_PROBE` (베드 중앙 종이 테스트) | `SAVE_CONFIG` |
+| 3 | `EDDY_BED_MESH` (rapid_scan 메쉬) | `SAVE_CONFIG` |
+| 4 | `EDDY_CALIBRATE_TEMP` (차가운 상태 종이 테스트 → 가열) | `SAVE_CONFIG` |
+
 ### DS18B20 챔버 온도 센서 (선택)
 Pi GPIO22에 1-wire로 연결, 커스텀 Klipper 모듈 `ds18b20/ds18b20_sysfs.py` (`sensor_type: DS18B20_HOST`) 로 sysfs 에서 읽음
 
