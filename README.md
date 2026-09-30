@@ -75,3 +75,8 @@ Pi GPIO22에 1-wire로 연결, 커스텀 Klipper 모듈 `ds18b20/ds18b20_sysfs.p
 
 ### ADXL345
 현재 센서 분리 상태 → 연결 안 된 채로 include 하면 Klipper가 시작되지 않으므로 `printer.cfg` 에서 `#[include adxl.cfg]` 주석 처리
+
+### 출력 높이
+- Klipper `[stepper_z] position_max: 210` → 툴헤드 이동 한계 (그 이상은 인클로저 천장 간섭)
+- **슬라이서 최대 출력 높이 200mm** → Z-hop / 출력 종료 후 Z 상승을 위한 여유 10mm
+- `PRINT_END` 의 Z 상승/와이프(`_PRINT_END_LIFT`)는 축 최대값을 넘지 않게 자동 제한
