@@ -52,6 +52,20 @@
 | 3 | `EDDY_BED_MESH` (rapid_scan 메쉬) | `SAVE_CONFIG` |
 | 4 | `EDDY_CALIBRATE_TEMP` (차가운 상태 종이 테스트 → 가열) | `SAVE_CONFIG` |
 
+### Panda Breath 챔버 히터
+BIQU Panda Breath(순정 펌웨어 V1.0.3, `192.168.1.198`)를 Klipper `heater_generic panda_breath` 로 연동
+- 모듈: [Panda-Breath-Klipper](https://git.dotsys.org/tladudtn/Panda-Breath-Klipper) (별도 리포, `~/Panda-Breath-Klipper` 에 clone)
+- 설정: `panda_breath/panda_breath.cfg` (host, 히터, verify_heater), `panda_breath/macros.cfg` (`M141`, `M191`)
+- 명령: `M141 S<C>`, `M191 S<C>`, `PANDA_BREATH_AUTO`, `PANDA_BREATH_DRY_START`, `PANDA_BREATH_DRY_STOP`
+- ⚠️ Klipper 재시작 시 Panda 강제 OFF → 기기 자동 모드는 `PANDA_BREATH_AUTO ENABLE=1` 또는 `M141` 로 다시 켜기
+
+**설치**
+```bash
+git clone https://git.dotsys.org/tladudtn/Panda-Breath-Klipper.git ~/Panda-Breath-Klipper
+~/Panda-Breath-Klipper/install.sh   # panda_breath/ 가 이미 있으면 모듈 링크만 생성
+```
+**비활성화**: `panda_breath/` 폴더 삭제 (`[include panda_breath/*.cfg]` 와일드카드)
+
 ### DS18B20 챔버 온도 센서 (선택)
 Pi GPIO22에 1-wire로 연결, 커스텀 Klipper 모듈 `ds18b20/ds18b20_sysfs.py` (`sensor_type: DS18B20_HOST`) 로 sysfs 에서 읽음
 
